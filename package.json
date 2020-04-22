@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "child_process": "^1.0.2",
+    "ipfs": "^0.43.0",
     "node-media-server": "^2.1.4"
   }
 }

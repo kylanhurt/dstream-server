@@ -1,4 +1,7 @@
 const NodeMediaServer = require('node-media-server');
+const fs = require('fs')
+const IPFS = require('ipfs')
+const { exec } = require('child_process')
 
 const config = {
   rtmp: {
@@ -25,9 +28,9 @@ const config = {
         rtmp:true,
         rtmpApp:'live2',
         hls: true,
-        hlsFlags: '[hls_time=2:hls_list_size=3:hls_flags=delete_segments]',
-        dash: true,
-        dashFlags: '[f=dash:window_size=3:extra_window_size=5]'
+        hlsFlags: '[hls_time=10:hls_list_size=0:hls_flags=delete_segments]',
+        // dash: true,
+        // dashFlags: '[f=dash:window_size=3:extra_window_size=5]'
       }
     ]
   }
@@ -35,3 +38,25 @@ const config = {
 
 var nms = new NodeMediaServer(config)
 nms.run();
+
+fs.watch('./media/live/', {}, (eventType, filename) => {
+  // console.log('eventType: ', eventType, ' filename: ', filename)
+  if (!filename.includes('.tmp')
+      && !filename.includes('.m4s')
+      && !filename.includes('.m3u8')
+      ) {
+    // need to remove to separate function that can be called
+    // periodically on previously-failed uploads
+    // will have to keep data in database
+    exec(`ipfs add ./media/live/${filename}`, (err, stdout, stderr) => {
+      if (err) {
+        //some err occurred
+        console.error(err)
+      } else {
+       // the *entire* stdout and stderr (buffered)
+       console.log(`stdout: ${stdout}`);
+       console.log(`stderr: ${stderr}`);
+      }
+    })
+  }
+})
