@@ -8,7 +8,7 @@ const rp = require('request-promise')
 const config = {
   rtmp: {
     port: 1935,
-    chunk_size: 60000,
+    chunk_size: 30000,
     gop_cache: true,
     ping: 30,
     ping_timeout: 60
